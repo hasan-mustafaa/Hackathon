@@ -572,6 +572,11 @@ app.add_middleware(
 )
 
 
+@app.get("")
+async def function():
+    return {"message": "true"}
+
+
 @app.post("/analyze-image", response_model=AnalyzeImageResponse)
 async def analyze_image(file: UploadFile = File(...)):
     """
