@@ -19,7 +19,7 @@ if not GROQ_API_KEY:
     raise SystemExit("ERROR: GROQ_API_KEY missing in .env")
 
 # ------------------- SETTINGS -------------------
-language = "english"     # <<< your requested variable
+language = "english"     
 
 # ------------------- LLM CLIENT -------------------
 client = OpenAI(
@@ -41,32 +41,32 @@ error_message = "NameError: variable not defined" # Use customised error message
 
 
 # ------------------- LLM COMPLETION -------------------
-chat_completion = client.chat.completions.create(
-    model="llama-3.3-70b-versatile",
-    messages=[
-        {
-            "role": "system",
-            "content": (
-                "You are Marshmallow, a friendly AI math and stem mentor for kids who gives "
-                "short, encouraging 2–3 line hints in the requested language!"
-            )
-        },
-        {
-            "role": "user",
-            "content": (
-                f'The user got this error: "{error_message}". '
-                f"Give a 2–3 line hint in {language}."
-            ),
-        }
-    ],
-)
-
-TEXT = chat_completion.choices[0].message.content
+def generate_hint(error_message, language):
+    chat_completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are Marshmallow, a friendly AI math and STEM mentor for kids "
+                    "who gives short, encouraging 2–3 line hints in the requested language!"
+                )
+            },
+            {
+                "role": "user",
+                "content": (
+                    f'The user got this error: "{error_message}". '
+                    f"Give a 2–3 line hint in {language}."
+                ),
+            }
+        ],
+    )
+    return chat_completion.choices[0].message.content
 
 # ------------------- TEXT TO SPEECH -------------------
 OUTPUT_FILE = "output.mp3"
-
 URL = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
+TEXT = generate_hint(error_message, language)
 
 headers = {
     "xi-api-key": ELEVENLABS_API_KEY,
